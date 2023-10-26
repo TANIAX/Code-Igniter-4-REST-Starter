@@ -106,9 +106,8 @@ http://localhost:81/docs
 
 
  -  **Routes**
-
-		-   To create a new route, add it to the `$routes` object in the `App/Config/Routes.php` file. The entry typically follows this format: `$routes->get('mycontroller', 'MyControllerController::index');`
-		-   For more detailed operations, I suggest referring to the CodeIgniter 4 documentation.
+	-   To create a new route, add it to the `$routes` object in the `App/Config/Routes.php` file. The entry typically follows this format: `$routes->get('mycontroller', 'MyControllerController::index');`
+	-   For more detailed operations, I suggest referring to the CodeIgniter 4 documentation.
    
 
  - **Controllers**
