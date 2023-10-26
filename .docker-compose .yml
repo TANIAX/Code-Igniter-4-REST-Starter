@@ -1,0 +1,42 @@
+version: '3.1'
+services:
+    web_angular:
+      image: httpd:2.4-alpine
+      container_name: frontend_app_name_web
+      ports:
+        - "82:80"
+      volumes:
+        - ${ANGULAR_APP}:/usr/local/apache2/htdocs/
+        - .docker/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+
+    web_php:
+      build: 
+        context: ./
+        dockerfile: .docker/nginx/Dockerfile
+      container_name: backend_app_name_nginx
+      ports:
+       - "81:80"
+      volumes:
+       - ${CODEIGNITER_DATABASE}:/var/www/html/vendor/codeigniter4/framework/system/Database #Fix db driver not working if theses class are only in container
+      networks:
+       - code-network
+    php:
+      build: 
+        context: ./
+        dockerfile: .docker/php/Dockerfile
+      container_name: backend_app_name_php
+      privileged: true
+      dns: 8.8.8.8 # your dns server
+      dns_search: my.domain # suffixe dns
+      volumes:
+       - ${CODEIGNITER_DATABASE}:/var/www/html/vendor/codeigniter4/framework/system/Database #Fix db driver not working if theses class are only in container
+       - ${ORACLE_TNS}:/usr/local/instantclient_21_1/network/admin/
+      networks:
+        - code-network
+      environment:
+        - TNS_ADMIN=/usr/local/instantclient_21_1/network/admin
+      # extra_hosts: # Xdebug If you want to debug with xdebug, uncomment the following lines 
+      #   - "host.docker.internal:host-gateway"
+networks:
+    code-network:
+        driver: bridge

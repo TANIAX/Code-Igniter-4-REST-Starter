@@ -1,0 +1,413 @@
+openapi: 3.0.0
+info:
+  title: 'PHP REST TEMPLATE'
+  description: 'API documentation'
+  version: '1'
+servers:
+  -
+    url: 'http://localhost:8081'
+    description: 'Local server'
+  -
+    url: 'http://localhost:82'
+    description: 'docker server'
+paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentification
+      summary: Authentification
+      description: Authentification
+      operationId: login
+      requestBody:
+        description: Authentification
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDTO'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDTO'
+        '400':
+          description: 'Empty login or password'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 400 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: 'Login or password empty' } }
+                type: object
+        '401':
+          description: 'Incorrect login or password'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 401 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: 'Login or password incorrect' } }
+                type: object
+  /api/v1/todo:
+    get:
+      tags:
+        - Todo
+      summary: 'List todos'
+      description: 'Get a list of todo entities at TodoWithOutIdResponseDTO format'
+      operationId: listTodo
+      responses:
+        '200':
+          description: 'Get a list of todo entities at TodoWithOutIdResponseDTO format'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 200 }
+                  success: { type: boolean, example: 'true' }
+                  data: { type: array, items: { $ref: '#/components/schemas/TodoWithOutIdResponseDTO' } }
+                  messages: { type: array, items: { type: string, example: string } }
+                type: object
+        '204':
+          description: 'No content'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 204 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: string } }
+                type: object
+    put:
+      tags:
+        - Todo
+      summary: 'Update a todo'
+      description: 'Update a todo entity with a TodoUpdateRequestDTO object'
+      operationId: updateTodo
+      requestBody:
+        description: 'Update a todo'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoUpdateRequestDTO'
+      responses:
+        '200':
+          description: 'Update success'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 200 }
+                  success: { type: boolean, example: 'true' }
+                  data: { $ref: '#/components/schemas/TodoResponseDTO' }
+                  messages: { type: array, items: { type: string, example: string } }
+                type: object
+        '400':
+          description: 'Invalid data'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 400 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: 'Name is required' } }
+                type: object
+        '404':
+          description: 'Todo not found'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 404 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: 'Todo 1 not found' } }
+                type: object
+        '500':
+          description: 'Updating failed'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 500 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: 'Todo 1 not updated' } }
+                type: object
+    post:
+      tags:
+        - Todo
+      summary: 'Create a todo'
+      description: 'Create a todo entity with a TodoCreateRequestDTO object'
+      operationId: createTodo
+      requestBody:
+        description: 'Creation of a todo'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoCreateRequestDTO'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 200 }
+                  success: { type: boolean, example: 'true' }
+                  data: { $ref: '#/components/schemas/TodoWithOutIdResponseDTO' }
+                  messages: { type: array, items: { type: string, example: string } }
+                type: object
+        '400':
+          description: 'Invalid data'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 400 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: 'Name is required' } }
+                type: object
+        '500':
+          description: 'Creation failed'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 500 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: string } }
+                type: object
+  '/api/v1/todo/{id}':
+    get:
+      tags:
+        - Todo
+      summary: 'show a todo'
+      description: 'Get a todo entity at TodoResponseDTO format'
+      operationId: showTodo
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id of the todo.'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Get a todo entity at TodoResponseDTO format'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 200 }
+                  success: { type: boolean, example: 'true' }
+                  data: { $ref: '#/components/schemas/TodoResponseDTO' }
+                type: object
+    delete:
+      tags:
+        - Todo
+      summary: 'Delete a todo'
+      description: 'Delete a todo entity with a TodoDeleteRequestDTO object'
+      operationId: deleteTodo
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'id of the todo.'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Delete success'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 200 }
+                  success: { type: boolean, example: 'true' }
+                  messages: { type: array, items: { type: string, example: '' } }
+                type: object
+        '404':
+          description: 'Todo not found'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 404 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: 'Todo 1 not found' } }
+                type: object
+        '500':
+          description: 'Updating failed'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: integer, example: 500 }
+                  success: { type: boolean, example: 'false' }
+                  messages: { type: array, items: { type: string, example: 'Todo 1 not deleted' } }
+                type: object
+components:
+  schemas:
+    LoginRequestDTO:
+      title: LoginRequestDTO
+      description: LoginRequestDTO
+      required:
+        - username
+        - password
+      properties:
+        username:
+          description: username
+          type: string
+          example: john.doe
+        password:
+          description: Password
+          type: string
+          example: M0N_M0T_DE_P4SS3_leet
+      type: object
+    TodoCreateRequestDTO:
+      title: TodoCreateRequestDTO
+      description: TodoCreateRequestDTO
+      required:
+        - name
+      properties:
+        name:
+          description: name
+          type: string
+          example: 'Buy fruits'
+        done:
+          description: done
+          type: boolean
+          example: 'false'
+      type: object
+    TodoUpdateRequestDTO:
+      title: TodoUpdateRequestDTO
+      description: TodoUpdateRequestDTO
+      required:
+        - id
+        - name
+      properties:
+        id:
+          description: id
+          type: integer
+          example: '1'
+        name:
+          description: name
+          type: string
+          example: 'Buy fruits'
+        done:
+          description: done
+          type: boolean
+          example: 'false'
+      type: object
+    LoginResponseDTO:
+      title: LoginResponseDTO
+      description: LoginResponseDTO
+      properties:
+        access_token:
+          description: 'access token'
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        refresh_token:
+          description: 'decode me'
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkVBU1RFUiBFR0cifQ.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJtZXJjaSI6Ikdyw6JjZSBhdXggdXNhZ2VycyB2b3VzIGF2ZXogdW4gZW1wbG9pLCBkb25jIG4nb3VibGlleiBwYXMgZGUgbGV1cnMgZGlyZSBtZXJjaSAhIn0.drMDruzO5qlje12n6PR-0b2wWC9J8G_wxOyUKv3qs9k
+        user:
+          description: user
+          type: object
+      type: object
+    TodoResponseDTO:
+      title: TodoResponseDTO
+      description: TodoResponseDTO
+      properties:
+        id:
+          description: id
+          type: integer
+          example: '1'
+        name:
+          description: name
+          type: string
+          example: 'Buy fruits'
+        done:
+          description: done
+          type: boolean
+          example: 'false'
+      type: object
+    TodoWithOutIdResponseDTO:
+      title: TodoWithOutIdResponseDTO
+      description: TodoWithOutIdResponseDTO
+      properties:
+        name:
+          description: name
+          type: string
+          example: 'Buy fruits'
+        done:
+          description: done
+          type: boolean
+          example: 'false'
+      type: object
+    Todo:
+      title: Todo
+      description: 'Todo entity'
+      properties:
+        id:
+          description: id
+          type: integer
+          example: '1'
+        name:
+          description: name
+          type: string
+          example: 'Buy fruits'
+        done:
+          description: done
+          type: boolean
+          example: 'false'
+      type: object
+    HttpResponse:
+      title: HttpResponse
+      description: 'Class for handling HTTP responses'
+      properties:
+        success:
+          description: 'Indicates whether the response was successful or not'
+          type: boolean
+          default: false
+        status:
+          description: 'The HTTP status code for the response'
+          type: integer
+          default: 500
+        messages:
+          type: array
+          items:
+            description: 'An array of strings representing messages for the response'
+            type: string
+        data:
+          description: 'The data returned by the response. Could be an anonymous object or an array of anonymous objects'
+          type: object
+      type: object
+  responses:
+    '204':
+      description: 'No content'
+      content:
+        application/json:
+          schema:
+            properties:
+              status:
+                type: integer
+                example: 204
+              success:
+                type: boolean
+                example: 'false'
+              messages:
+                type: array
+                items:
+                  type: string
+                  example: string
+            type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      bearerFormat: JWT
+      scheme: bearer
