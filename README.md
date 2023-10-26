@@ -9,7 +9,7 @@
 <center><strong>This build is based on the </strong> <a  href="https://hub.docker.com/_/php/"> official</a> <strong>PHP docker image</strong></center>
 
 <p align="center">
-	<a href="https://github.com/TANIAX/Code-Igniter-4-REST-Starter">Submit an issue</a>
+	<a href="https://github.com/TANIAX/Code-Igniter-4-REST-Starter/issues">Submit an issue</a>
 </p>
 
 
@@ -139,6 +139,7 @@ http://localhost:81/docs
 	 - Your repository should **inherit** from `BaseRepository` and implements the `IRepository` interface.
 	 - You basicly do what ever you need to in this class, the main purpose of this is to place the sql request, how ever you want to execute it (code igniter standart or vanilla php) the important thing is to use the `getResultAs` method with the correct arguments and return back the result to your controller.
 
+<pre>
 ├───Config
 │   ├───Boot
 │   └───Mapper
@@ -176,3 +177,4 @@ http://localhost:81/docs
     │   ├───cli
     │   └───html
     └───swagger
+</pre>
