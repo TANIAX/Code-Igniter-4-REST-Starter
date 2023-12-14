@@ -3,7 +3,7 @@
 namespace App\Libraries\AD;
 
 use Exception;
-use Adldap\Adldap;
+use LdapRecord\Connection;
 
 /**
  * Class Ad
@@ -13,8 +13,7 @@ use Adldap\Adldap;
  */
 class Ad
 {
-    private $adldap;
-    private $adProvider;
+    private $connection;
 
     /**
      * Ad constructor.
@@ -23,15 +22,17 @@ class Ad
      */
     public function __construct()
     {
+
         #region AD configuration
-        $options = array(
-            'account_suffix'        => getenv('AD_ACCOUNT_SUFFIX'),
-            'base_dn'               => getenv('AD_BASE_DN'),
-            'domain_controllers'    => array(getenv('AD_DOMAIN_CONTROLLER')),
-            'admin_username'        => getenv('AD_ADMIN_USERNAME'),
-            'admin_password'        => getenv('AD_ADMIN_PASSWORD')
-        );
-        $this->InitAldap();
+        $options = [
+            'hosts' => array(getenv('AD_DOMAIN_CONTROLLER')),
+            'base_dn' => getenv('AD_BASE_DN'),
+            'username' => getenv('AD_ADMIN_USERNAME') . getenv('AD_ACCOUNT_SUFFIX'),
+            'password' => getenv('AD_ADMIN_PASSWORD'),
+        ];
+    
+        $this->InitAldap($options);
+        #endregion
     }
 
     
@@ -44,21 +45,10 @@ class Ad
      */
     public function connect(string $username, string $password)
     {
-        try {
-            $ad = new Adldap();
-            $ad->addProvider([
-                'hosts'             => array(getenv('AD_DOMAIN_CONTROLLER')),
-                'base_dn'           => getenv('AD_BASE_DN'),
-                'account_suffix'    => getenv('AD_ACCOUNT_SUFFIX'),
-                'username'          => $username . getenv('AD_ACCOUNT_SUFFIX'),
-                'password'          => $password,
-            ]);
-            $provider = $ad->connect();
-        } catch (Exception $e) {
-            return false;
-        }
+        if ($this->connection->auth()->attempt($username . getenv('AD_ACCOUNT_SUFFIX'), $password))
+            return true;
 
-        return true;
+        return false;    
     }
 
     /**
@@ -66,17 +56,15 @@ class Ad
      * 
      * @return void
      */
-    private function InitAldap()
+    private function InitAldap($options)
     {
-        $this->adldap = new Adldap();
-        $config  = array(
-            'hosts'             => array(getenv('AD_DOMAIN_CONTROLLER')),
-            'base_dn'           => getenv('AD_BASE_DN'),
-            'account_suffix'    => getenv('AD_ACCOUNT_SUFFIX'),
-            'username'          => getenv('AD_ADMIN_USERNAME') . getenv('AD_ACCOUNT_SUFFIX'),
-            'password'          => getenv('AD_ADMIN_PASSWORD')
-        );
-        $this->adldap->addProvider($config);
-        $this->adProvider = $this->adldap->connect();
+        $this->connection = new Connection($options);
+
+        try {
+            $this->connection->connect();
+        } catch (\LdapRecord\Auth\BindException $e) {
+            throw new Exception("Impossible de se connecter à l'Active Directory");
+        }
+        
     }
 }

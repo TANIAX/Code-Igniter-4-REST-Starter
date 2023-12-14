@@ -8,7 +8,7 @@ servers:
     url: 'http://localhost:8081'
     description: 'Local server'
   -
-    url: 'http://localhost:82'
+    url: 'http://localhost:81'
     description: 'docker server'
 paths:
   /api/v1/auth/login:
@@ -228,7 +228,7 @@ paths:
                 properties:
                   status: { type: integer, example: 200 }
                   success: { type: boolean, example: 'true' }
-                  messages: { type: array, items: { type: string, example: '' } }
+                  messages: { type: array, items: { type: string, example: string } }
                 type: object
         '404':
           description: 'Todo not found'

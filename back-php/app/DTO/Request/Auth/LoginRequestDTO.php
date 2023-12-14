@@ -51,15 +51,6 @@ class LoginRequestDTO extends DTORequest
             new Length(['min' => 3, 'minMessage'=> 'Le mot de passe doit contenir au moins 3 caractères']),
         ]); 
 
-        foreach($this->violations as $violation)
-        {
-            if(count($violation) > 0)
-            {
-                foreach($violation as $error)
-                    $errors[] = $error->getMessage();
-            }
-        }
-
-        return $this->errors;
+        return $this->getErrors();
     }
 }

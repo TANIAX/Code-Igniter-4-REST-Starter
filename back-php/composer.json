@@ -11,7 +11,7 @@
         "symfony/validator": "^6.2",
         "zircote/swagger-php": "^4.5",
         "mark-gerarts/auto-mapper-plus": "^1.4",
-        "adldap2/adldap2": "^10.5"
+        "directorytree/ldaprecord": "^3.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9",
